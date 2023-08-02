@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -20,46 +21,56 @@ public class insertApp {
         int result = 0;
 
         Scanner sc = new Scanner(System.in);
-        MenuDTO mDto = new MenuDTO();
+
+        ArrayList<MenuDTO> dtoList = new ArrayList<>();
+        MenuDTO dto = new MenuDTO();
 
         System.out.println("메뉴 추가");
         System.out.println("메뉴이름이 어찌됨?");
 
         String foodName = sc.nextLine();
-        mDto.setMenuName(foodName);
+        dto.setMenuName(foodName);
 
         System.out.println("얼마?");
 
         int menuPrice = sc.nextInt();
-        mDto.setMenuPrice(menuPrice);
+        dto.setMenuPrice(menuPrice);
         sc.nextLine();
 
         System.out.println("주문가능함? Y/N");
 
         String orderableStatus = sc.nextLine();
-        mDto.setOrderableStatus(orderableStatus);
+        dto.setOrderableStatus(orderableStatus);
 
         System.out.println("음식 카테고리 번호");
         System.out.println("1.식사 2.음료 3.디저트 4.한식 5.중식");
 
         int categoryCode = sc.nextInt();
-        mDto.setCategoryCode(categoryCode);
+        dto.setCategoryCode(categoryCode);
         sc.nextLine();
 
         Properties prop = new Properties();
+        dtoList.add(dto);
 
         try {
             prop.loadFromXML(new FileInputStream("src/main/java/com/ohgiraffers/mapper/menu-query.xml"));
             String query = prop.getProperty("insertMenu");
 
+            /*MenuDTO menudto = new MenuDTO();*/
+
             pstmt = con.prepareStatement(query);
-            pstmt.setString(1, mDto.getMenuName());
-            pstmt.setInt(2, mDto.getMenuPrice());
-            pstmt.setString(3, mDto.getOrderableStatus());
-            pstmt.setInt(4, mDto.getCategoryCode());
+
+            for (MenuDTO menudto : dtoList) {
+                pstmt.setString(1, menudto.getMenuName());
+                pstmt.setInt(2, menudto.getMenuPrice());
+                pstmt.setString(3, menudto.getOrderableStatus());
+                pstmt.setInt(4, menudto.getCategoryCode());
+            }
 
             result = pstmt.executeUpdate();
+
             System.out.println(result + "개의 메뉴 추가완료 :)");
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {

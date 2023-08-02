@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
 import static com.ohgiraffers.common.JDBCTemplate.getConnection;
@@ -20,23 +21,24 @@ public class selectApp {
     ResultSet rset = null;
 
     Scanner sc = new Scanner(System.in);
-    MenuDTO mDto = new MenuDTO();
+
+    ArrayList<MenuDTO> dtoList = new ArrayList<>();
+    MenuDTO dto = new MenuDTO();
 
     System.out.println("음식 가격 조회");
     System.out.println("1.식사 2.음료 3.디저트 4.한식 5.중식");
 
     int categoryNum = sc.nextInt();
-    mDto.setCategoryCode(categoryNum);
+    dto.setCategoryCode(categoryNum);
 
     Properties prop = new Properties();
 
     try {
         prop.loadFromXML(new FileInputStream("src/main/java/com/ohgiraffers/mapper/menu-query.xml"));
         String query = prop.getProperty("selectCategory");
-        /* System.out.println("query : " + query); */
 
         pstmt = con.prepareStatement(query);
-        pstmt.setInt(1, mDto.getCategoryCode());
+        pstmt.setInt(1, dto.getCategoryCode());
 
         rset = pstmt.executeQuery();
 
@@ -44,8 +46,20 @@ public class selectApp {
             String foodName = rset.getString("MENU_NAME");
             int price = rset.getInt("MENU_PRICE");
             int menuCode = rset.getInt("MENU_CODE");
+            dto.setMenuName(foodName);
+            dto.setMenuPrice(price);
+            dto.setMenuCode(menuCode);
+            dtoList.add(dto);
 
-            System.out.println("제품번호 " + menuCode + "번의 "+ foodName + " 가격은 " + price + "원 입니다.");
+            /*System.out.println("제품번호 " + menuCode + "번의 "+ foodName + " 가격은 " + price + "원 입니다.");*/
+
+            for (MenuDTO menudto : dtoList) {
+                System.out.println("제품번호 " + menudto.getMenuCode()
+                                    + "번의 "+ menudto.getMenuName()
+                                    + " 가격은 " + menudto.getMenuPrice()
+                                    + "원 입니다.");
+            }
+
             }
         } catch (IOException e) {
         e.printStackTrace();
