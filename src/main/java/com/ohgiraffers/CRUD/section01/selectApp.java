@@ -42,25 +42,27 @@ public class selectApp {
 
         rset = pstmt.executeQuery();
 
-        while(rset.next()) {
+        while (rset.next()) {
             String foodName = rset.getString("MENU_NAME");
             int price = rset.getInt("MENU_PRICE");
             int menuCode = rset.getInt("MENU_CODE");
-            dto.setMenuName(foodName);
-            dto.setMenuPrice(price);
-            dto.setMenuCode(menuCode);
-            dtoList.add(dto);
 
-            /*System.out.println("제품번호 " + menuCode + "번의 "+ foodName + " 가격은 " + price + "원 입니다.");*/
+            MenuDTO menuDTO = new MenuDTO();
 
-            for (MenuDTO menudto : dtoList) {
-                System.out.println("제품번호 " + menudto.getMenuCode()
-                                    + "번의 "+ menudto.getMenuName()
-                                    + " 가격은 " + menudto.getMenuPrice()
-                                    + "원 입니다.");
-            }
+            menuDTO.setMenuName(foodName);
+            menuDTO.setMenuPrice(price);
+            menuDTO.setMenuCode(menuCode);
+            dtoList.add(menuDTO);
+        }
 
-            }
+        for (MenuDTO menudto : dtoList) {
+            System.out.println("제품번호 " + menudto.getMenuCode()
+                    + "번의 "+ menudto.getMenuName()
+                    + " 가격은 " + menudto.getMenuPrice()
+                    + "원 입니다.");
+        }
+
+
         } catch (IOException e) {
         e.printStackTrace();
         } catch (SQLException e) {
@@ -69,7 +71,6 @@ public class selectApp {
             close(con);
             close(pstmt);
             close(rset);
-            /* 이전에 배울땐 close를 사용한 순서의 역순으로 닫으라했는데 그렇게 안함*/
     }
     }
 }
